@@ -38,7 +38,7 @@ def test_solve_time(a, u0, T, dt):
     model = ExponentialDecay(a)
     res = solve_ode(model, u0, T, dt)
 
-    t_computed = res.time
-    t_expected = np.arange(0, T, dt)
+    res_computed = res.time
+    res_expected = np.arange(0, T, dt)
 
-    assert t_expected.all() == t_computed.all()
+    assert res_expected.all() == res_computed.all()
