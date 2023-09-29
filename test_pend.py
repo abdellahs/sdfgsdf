@@ -4,7 +4,8 @@ import pytest
 
 
 @pytest.mark.parametrize("L, theta, omega, dtomega", [
-    (1.42, np.pi/6, 0.35, (-9.81/1.42) * np.sin(np.pi/6)), 
+    (1.42, np.pi/6, 0.35, 
+     (-9.81/1.42) * np.sin(np.pi/6)), 
     (1.42, 0, 0, 0)])
 
 def test_pendulum(L, theta, omega, dtomega): 
