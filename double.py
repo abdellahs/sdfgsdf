@@ -2,6 +2,7 @@ from ode import ODEModel, ODEResult, solve_ode
 import numpy as np
 import matplotlib.pyplot as plt
 
+#Exercise 3a):
 
 class DoublePendulum(ODEModel):
     def __init__(self, L1: float = 1, L2: float = 1, M1: float = 1, M2: float = 1, g: float = 9.81) -> None:
@@ -15,7 +16,6 @@ class DoublePendulum(ODEModel):
         theta1, omega1, theta2, omega2 = u
         dtheta1_dt = omega1
         dtheta2_dt = omega2
-##
         dtheta = theta2 - theta1
 
         domega1_dt = (self.L1*(omega1**2)*np.sin(dtheta)*np.cos(dtheta) + self.g*np.sin(theta2)*np.cos(dtheta) + self.L2*(omega2**2)*np.sin(dtheta) - 2*self.g*np.sin(theta1))/(2*self.L1 - self.L1*(np.cos(dtheta))**2)
@@ -23,10 +23,12 @@ class DoublePendulum(ODEModel):
 
         return np.array([dtheta1_dt, domega1_dt, dtheta2_dt, domega2_dt])
 
+
+#Exercise 3c):
+
     @property 
     def num_states(self) -> int:
         return 4
-
 
 from dataclasses import dataclass
 
@@ -89,7 +91,10 @@ class DoublePendulumResults:
     @property 
     def vy2(self) -> np.ndarray:
         return np.gradient(self.y2, self.results.time)
+
+
     
+    # Exercise 3d):
     @property
     def kinetic_energy(self) -> np.ndarray:
         K_1 = (1/2)*self.pendulum.M1*(self.vx1**2 + self.vy1**2)
@@ -101,7 +106,6 @@ class DoublePendulumResults:
     def total_energy(self) -> np.ndarray:
         return self.potential_energy + self.kinetic_energy
 
-##    
 from typing import Optional
 def solve_double_pendulum(
     u0: np.ndarray,
@@ -117,7 +121,6 @@ def solve_double_pendulum(
     return pendulum_results
 
 
-##
 from pendulum import plot_energy
 def exercise_3d():
     
