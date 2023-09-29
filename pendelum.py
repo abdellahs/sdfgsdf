@@ -1,9 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
-
 from ode import ODEModel, ODEResult, solve_ode, plot_ode_solution
 
+# Exercise 2a):
 
 class Pendulum(ODEModel):
     def __init__(self, L: float = 1, M: float = 1, g: float = 9.81) -> None: 
@@ -25,6 +24,7 @@ class Pendulum(ODEModel):
         return 2
 
 
+# Exercise 2b):
 def exercise_2b(
     u0: np.ndarray,
     T: float,
@@ -37,18 +37,18 @@ def exercise_2b(
     return result
 
 
-#
+# Exercise 2c)
 from dataclasses import dataclass
 import numpy as np
 
 
 @dataclass
 class PendulumResults:
-    res: ODEResult ### 
-    pendulum: Pendulum  ### 
+    res: ODEResult  
+    pendulum: Pendulum 
 
 
-
+Exercise 2d)
     @property 
     def omega(self) -> np.ndarray:
         return self.res.solution[1]
@@ -102,6 +102,8 @@ def solve_pendulum(
 
     return pendulum_results
 
+# Exercise 2g): 
+
 def plot_energy(res: PendulumResults, filename: Optional[str] = None) -> None:
 
     p_ = res.potential_energy
@@ -136,15 +138,14 @@ def exercise_2g() -> PendulumResults:
     return result
 
 
+# Exercise 2h):
+
 class DampenedPendulum(Pendulum):
     def __init__(self, B: float, L: float = 1, M: float = 1, g: float = 9.81) -> None:
-      
         super().__init__(L, M, g)
         self.B = B
 
-
     def __call__(self, t, u):
-     
         theta, omega = u
         dtheta = omega
         domega = (-self.g/self.L) * np.sin(theta) - self.B * omega
@@ -172,5 +173,4 @@ from typing import Optional
     result_exercise_2g = exercise_2g()
     plot_energy(result_exercise_2g, "energy_single.png")
    
-
     exercise_2h()
