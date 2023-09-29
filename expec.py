@@ -4,9 +4,14 @@ from ode import ODEModel, plot_ode_solution, solve_ode
 from scipy.integrate import solve_ivp
 
 
+# Exercise 1a):
+
 class ExponentialDecay(ODEModel):
     def __init__(self, a) -> None:
         self.decay = a
+
+    
+#Exercise 1b):
     
     @property
     def decay(self) -> float:
@@ -15,20 +20,22 @@ class ExponentialDecay(ODEModel):
     @decay.setter
     def decay(self, value) -> None:
         if value < 0:
-            raise ValueError("Constant cannot be negative.")
+            raise ValueError(" (a) can not be negative ")
         self._a = value
+        
+
+# Exercise 1c):
     
     def __call__(self, t: float, u: np.ndarray) -> np.ndarray:
-
-      
-
         f = lambda t, u: -self.decay*u
         return f(t, u)
 
     @property
     def num_states(self) -> int:
         return 1
-    
+
+# Exercise 1e):
+
 def solve_exponential_decay(
     a: float, 
     u: np.ndarray, 
