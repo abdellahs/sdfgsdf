@@ -3,7 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 
-#
+# Exercise 1c):
+
 import abc
 class ODEModel(abc.ABC):
 
@@ -11,6 +12,8 @@ class ODEModel(abc.ABC):
     def __call__(self, t: float, u: np.ndarray) -> np.ndarray:
         raise NotImplementedError
 
+    
+#Exercise 1d) :
     @property
     def num_states(self) -> int:
         raise NotImplementedError
@@ -36,13 +39,17 @@ def solve_ode(
     T: float,
     dt : float 
 ) -> ODEResult:
-    
+
+
+# exercise 1g):
+
 class InvalidInitialConditionError(RuntimeError):
     def __init__(self, message):            
         super().__init__(message)
 
+    
     if len(u0) != model.num_states:
-        raise InvalidInitialConditionError(f"u0 needs to match the number of state variables of {type(model).__name__}. Len(u0) = {len(u0)}, and num_states = {model.num_states}.")
+        raise InvalidInitialConditionError(f"u0 does not  match the number of state variables: {type(model).__name__}. Len(u0) = {len(u0)}, and num_states = {model.num_states}.")
 
     t = np.arange(0, T, dt)
     sol = solve_ivp(fun=model, t_span=(0,T), y0=u0, t_eval=t, method="Radau")
@@ -50,7 +57,7 @@ class InvalidInitialConditionError(RuntimeError):
 
     return res
 
-#
+# Exercise 1j)
 
 from typing import Optional, List
 def plot_ode_solution(
