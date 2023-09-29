@@ -37,7 +37,7 @@ def exercise_2b(
     return result
 
 
-# Exercise 2c)
+# Exercise 2c):
 from dataclasses import dataclass
 import numpy as np
 
@@ -48,7 +48,7 @@ class PendulumResults:
     pendulum: Pendulum 
 
 
-Exercise 2d)
+# Exercise 2d):
     @property 
     def omega(self) -> np.ndarray:
         return self.res.solution[1]
@@ -129,7 +129,6 @@ def plot_energy(res: PendulumResults, filename: Optional[str] = None) -> None:
     
 
 def exercise_2g() -> PendulumResults:
-
     u0 = np.array([np.pi/6, .35])
     T = 10
     dt = .01
@@ -162,9 +161,10 @@ def exercise_2h():
     plot_energy(result, "energy_damped.png")
 
 if __name__ == "__main__":
+    
 
 from typing import Optional
-  
+
     result_exercise_2b = exercise_2b(np.array([np.pi/6, .35]), 10, .01)
     labels = [r"$\theta$", r"$\omega$"]
     plot_ode_solution(result_exercise_2b, labels, "exercise_2b.png")
