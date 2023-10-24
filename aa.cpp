@@ -180,3 +180,80 @@ public:
         return old_value;    
     }
 };
+
+
+    int argmin() {
+        if (_size == 0) {
+            throw std::underflow_error("Cannot find argmin in an empty list");
+        }
+
+        int min_value = _data[0];
+        int min_index = 0;
+
+        for (int i = 1; i < _size; i++) {
+            if (_data[i] < min_value) {
+                min_value = _data[i];
+                min_index = i;
+            }
+        }
+
+        return min_index;
+    }
+};
+
+    int argmax() {
+        if (_size == 0) {
+            throw std::underflow_error("Cannot find argmax in an empty list");
+        }
+
+        int max_value = _data[0];
+        int max_index = 0;
+
+        for (int i = 1; i < _size; i++) {
+            if (_data[i] > max_value) {
+                max_value = _data[i];
+                max_index = i;
+            }
+        }
+
+        return max_index;
+    }
+};
+
+
+int min() {
+    if (_size == 0) {
+        throw std::underflow_error("Cannot find the minimum in an empty list");
+    }
+
+    int min_value = _data[0];
+
+    for (int i = 1; i < _size; i++) {
+        if (_data[i] < min_value) {
+            min_value = _data[i];
+        }
+    }
+
+    return min_value;
+}
+
+int max() {
+    if (_size == 0) {
+        throw std::underflow_error("Cannot find the maximum in an empty list");
+    }
+
+    int max_value = _data[0];
+
+    for (int i = 1; i < _size; i++) {
+        if (_data[i] > max_value) {
+            max_value = _data[i];
+        }
+    }
+
+    return max_value;
+}
+
+
+
+
+
