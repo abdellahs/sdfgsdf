@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+#include <cmath>
 
 class ArrayList {
 private:
@@ -8,7 +9,7 @@ private:
     int _capacity = 1;
     int _size = 0;
 
-    // Metode for å øke kapasiteten til arrayen
+    // Method for increasing the capacity of the array
     void resize() {
         int new_capacity = _capacity * 2;
         int* new_data = new int[new_capacity];
@@ -22,7 +23,6 @@ private:
         _capacity = new_capacity;
     }
 
-    // Metode for å redusere kapasiteten til arrayen hvis nødvendig
     void shrink_to_fit() {
         int new_capacity = 1;
 
@@ -31,7 +31,7 @@ private:
         }
 
         if (new_capacity == _capacity) {
-            // Ingen behov for å redusere, kapasiteten er allerede passende.
+            // No need to reduce, the capacity is already suitable.
             return;
         }
 
@@ -47,47 +47,62 @@ private:
     }
 
 public:
-    // Standard konstruktør
+    // Default constructor
     ArrayList() {
         _data = new int[_capacity];
     }
 
-    // Konstruktør som initialiserer fra en std::vector
+    // Constructor for a list of values
     ArrayList(std::vector<int> values) {
-        _size = values.size();
-        _capacity = _size;
+        // Set the capacity to match the input size
+        _capacity = values.size();
+        _size = 0;  // Initialize size to 0
 
+        // Allocate memory
         _data = new int[_capacity];
 
-        for (int i = 0; i < _size; i++) {
-            _data[i] = values[i];
+        // Copy elements from the vector
+        for (int value : values) {
+            append(value);
         }
     }
 
-    // Destruktør for å frigjøre minnet til arrayen
+    // Destructor
     ~ArrayList() {
         delete[] _data;
     }
 
-    // Returnerer lengden av arrayen
+    // Length of array
+    // Get the current size of the array
     int length() {
         return _size;
     }
 
-    // Returnerer kapasiteten til arrayen
+    // Retrieve the array's maximum capacity
     int capacity() {
         return _capacity;
     }
 
-    // Legger til et element i slutten av arrayen
-    void append(int n) {
-        if (_size >= _capacity)
+    /**
+     * @brief Append element to the end of the list
+     *
+     * @param n The value to be appended
+     */
+    void append(int value) {
+        if (_size >= _capacity) {
             resize();
+        }
 
-        _data[_size++] = n;
+        _data[_size++] = value;
     }
 
-    // Henter verdien på en spesifikk indeks
+    /**
+     * @brief Get value at a given index.
+     * Throws a range error if the index is out of bounds
+     *
+     * @param index The index
+     * @return int The value at that index
+     */
     int get(int index) {
         if (index < 0 || index >= _size) {
             throw std::out_of_range("Index is out of bounds");
@@ -95,46 +110,70 @@ public:
         return _data[index];
     }
 
-    // Skriver ut arrayen til konsollen
+    /**
+     * @brief Prints the array
+     *
+     */
     void print() {
-        std::cout << "ArrayList([";
+        std::cout << "[";
         for (int i = 0; i < _size - 1; i++) {
             std::cout << _data[i] << ", ";
         }
-        std::cout << _data[_size - 1] << "])\n";
+        std::cout << _data[_size - 1] << "]\n";
     }
 
-    // Gir referanse til verdien på en spesifikk indeks
+    /**
+     * @brief Get a reference to the value at a given index.
+     * Throws a range error if the index is out of bounds
+     *
+     * @param index The index
+     * @return int The value at that index
+     */
     int &operator[](int index) {
         if (index < 0 || index >= _size) {
-            throw std::out_of_range("Index is out of bounds");
+            throw std::range_error("Index is out of bounds");
         }
         return _data[index];
     }
 
-    // Setter inn et element på en spesifikk indeks
-    void insert(int val, int index) {
+    /**
+     * @brief get a value and an index.
+     * throw an error if the index is out of bounds
+     *
+     * increase size by 1
+     *
+     * move values to the right of the index by one index up.
+     *
+     * @param val the value
+     * @param index the index
+     *
+     */
+    void insert(int value, int index) {
         if (index < 0 || index > _size) {
             throw std::out_of_range("Index is out of bounds");
         }
 
-        if (_size >= _capacity)
+        if (_size >= _capacity) {
             resize();
+        }
 
         if (index == _size) {
-            append(val);
-            return;
+            append(value);
+        } else {
+            for (int i = _size; i > index; i--) {
+                _data[i] = _data[i - 1];
+            }
+            _data[index] = value;
+            _size++;
         }
-
-        for (int i = _size; i > index; i--) {
-            _data[i] = _data[i - 1];
-        }
-
-        _data[index] = val;
-        _size++;
     }
 
-    // Fjerner et element på en spesifikk indeks
+    /**
+     * @brief deletes the element from the list.
+     *
+     * @param index the index
+     *
+     */
     void remove(int index) {
         if (index < 0 || index >= _size) {
             throw std::out_of_range("Index is out of bounds");
@@ -143,13 +182,22 @@ public:
         for (int i = index; i < _size - 1; i++) {
             _data[i] = _data[i + 1];
         }
+
         _size--;
 
-        if (_size < 0.25f * _capacity)
+        // Check if the array can be resized to fit if less than 25% of the allocated capacity is used
+        if (_size < 0.25 * _capacity) {
             shrink_to_fit();
+        }
     }
 
-    // Fjerner og returnerer et element på en spesifikk indeks
+    /***
+     * @brief removing an element at a given index
+     *
+     * @param index
+     * @return int the value at that index
+     */
+
     int pop(int index) {
         if (index < 0 || index >= _size) {
             throw std::out_of_range("Index is out of bounds");
@@ -157,55 +205,77 @@ public:
 
         int old_value = _data[index];
 
+        // Move the elements to fill the gap left by the removed element
         for (int i = index; i < _size - 1; i++) {
             _data[i] = _data[i + 1];
         }
+
         _size--;
 
-        if (_size < 0.25f * _capacity)
+        // Check if the array can be resized to fit if less than 25% of the allocated capacity is used
+        if (_size < 0.25 * _capacity) {
             shrink_to_fit();
+        }
 
         return old_value;
     }
 
-    // Fjerner og returnerer det siste elementet i arrayen
+    /**
+     * @brief removing the last element in the list
+     *
+     * @return int the last element
+     */
     int pop() {
         if (_size == 0) {
-            throw std::underflow_error("Cannot pop from an empty list");
+            throw std::underflow_error("List is empty, cannot pop");
         }
 
         int old_value = _data[_size - 1];
         _size--;
 
-        if (_size < 0.25f * _capacity)
+        // Check if the array can be resized to fit if less than 25% of the allocated capacity is used
+        if (_size < 0.25 * _capacity) {
             shrink_to_fit();
+        }
 
         return old_value;
     }
 
-    // Returnerer indeksen til det minste elementet i arrayen
-    int argmin() {
+    int max() {
         if (_size == 0) {
-            throw std::underflow_error("Cannot find argmin in an empty list");
+            throw std::underflow_error("List is empty, cannot find max");
+        }
+
+        int max_value = _data[0];
+
+        for (int i = 1; i < _size; i++) {
+            if (_data[i] > max_value) {
+                max_value = _data[i];
+            }
+        }
+
+        return max_value;
+    }
+
+    int min() {
+        if (_size == 0) {
+            throw std::underflow_error("List is empty, cannot find min");
         }
 
         int min_value = _data[0];
-        int min_index = 0;
 
         for (int i = 1; i < _size; i++) {
             if (_data[i] < min_value) {
                 min_value = _data[i];
-                min_index = i;
             }
         }
 
-        return min_index;
+        return min_value;
     }
 
-    // Returnerer indeksen til det største elementet i arrayen
     int argmax() {
         if (_size == 0) {
-            throw std::underflow_error("Cannot find argmax in an empty list");
+            throw std::underflow_error("List is empty, cannot find argmax");
         }
 
         int max_value = _data[0];
@@ -221,15 +291,33 @@ public:
         return max_index;
     }
 
-    // Returnerer det minste elementet i arrayen
-    int min() {
+    int argmin() {
         if (_size == 0) {
-            throw std::underflow_error("Cannot find the minimum in an empty list");
+            throw std::underflow_error("List is empty, cannot find argmin");
         }
 
         int min_value = _data[0];
+        int min_index = 0;
 
         for (int i = 1; i < _size; i++) {
             if (_data[i] < min_value) {
                 min_value = _data[i];
-           
+                min_index = i;
+            }
+        }
+
+        return min_index;
+    }
+
+    int count(int value) {
+        int count = 0;
+
+        for (int i = 0; i < _size; i++) {
+            if (_data[i] == value) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+};
