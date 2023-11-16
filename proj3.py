@@ -308,3 +308,32 @@ if __name__ == "__main__":
 
 
 plt.close()
+
+import time
+
+if __name__ == "__main__":
+    circular_maze = circular()
+
+    # Vary the number of walkers
+    walker_counts = [10, 50, 100, 200, 500, 1000]
+    
+    # Measure time for each walker count
+    for walker_count in walker_counts:
+        try:
+            rng = np.random.default_rng()
+            start_time = time.perf_counter()
+
+            # Initialize the walker
+            walker = MazeWalker(M=walker_count, maze=circular_maze, rng=rng, r0=(100, 100))
+
+            # Simulate the walk
+            for _ in range(200):
+                walker.move()
+
+            end_time = time.perf_counter()
+            elapsed = end_time - start_time
+
+            print(f"Number of Walkers: {walker_count}, Time Elapsed: {elapsed:.6f} seconds")
+
+        except InvalidSquareError as e:
+            print(f"Error: {e}")
