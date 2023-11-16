@@ -11,33 +11,96 @@ import matplotlib.image
 class InvalidSquareError(LookupError):
     pass
 
+
 def get_legal_line(maze: np.ndarray, y: int) -> list[tuple[int, int]]:
+    """All legal points at a certain line of maze
+
+    Parameters
+    ----------
+    maze : np.ndarray
+        The array representing the maze
+    y : int
+        Coordinte for the line
+
+    Returns
+    -------
+    list[tuple[int, int]]
+        List of points that are valid along this line
+
+    Raises
+    ------
+    TypeError
+        If `y` is not an integer
+    """
     if not isinstance(y, (int, np.integer)):
         raise TypeError("line number y must be an int.")
     return [(x[0], y) for x in np.argwhere(maze[:, y])]
 
-def plot(maze: np.ndarray, ax: matplotlib.axes.Axes | None = None) -> matplotlib.image.AxesImage:
+
+def plot(
+    maze: np.ndarray, ax: matplotlib.axes.Axes | None = None
+) -> matplotlib.image.AxesImage:
     _ax = ax or plt.gca()
     im = _ax.imshow(maze.T, origin="lower", cmap="gray")
     im.set_clim(vmax=1)
     _ax.set_axis_off()
     return im
 
+
 def circular(R: int = 100, padding: int = 2) -> np.ndarray:
+    """Create a circular area.
+
+    Parameters
+    ----------
+    R : int, optional
+        radius of the circular area, by default 100
+    padding : int, optional
+        padding around the area, by default 2
+
+    Returns
+    -------
+    np.ndarray
+       Boolean array with True inside the circle and False outside
+    """
     N = int(2 * (R + padding) + 1)
     c = (N - 1) // 2
     x = np.arange(N)
     xx, yy = np.meshgrid(x, x)
     return (xx - c) ** 2 + (yy - c) ** 2 <= R**2
 
+
 def example() -> np.ndarray:
+    """Create an example labyrinth
+
+    Returns
+    -------
+    np.ndarray
+       Boolean array with True inside the labyrinth and False outside
+    """
     arr = np.zeros((7, 7), dtype=bool)
     indices = np.array([1, 3, 5])
     arr[1:-1, indices] = True
     arr[indices, 1:-1] = True
     return arr
 
+
 def layered_labyrinth(layers: int = 2, width: int = 3, height: int = 5) -> np.ndarray:
+    """Create a layered labyrinth
+
+    Parameters
+    ----------
+    layers : int, optional
+        Number of layers, by default 2
+    width : int, optional
+        The width of the labyrinth, by default 3
+    height : int, optional
+        The height of the labyrinth, by default 5
+
+    Returns
+    -------
+    np.ndarray
+        Boolean array with True inside the labyrinth and False outside
+    """
     bars = 3 ** (layers + 1)
     Mx = 2 + width * bars + bars - 1
     My = 2 + height * (layers + 2) + width * (layers + 1)
@@ -54,6 +117,7 @@ def layered_labyrinth(layers: int = 2, width: int = 3, height: int = 5) -> np.nd
         jump *= 3
     return arr
 
+
 class MazeWalker(Protocol):
     x: np.ndarray
     y: np.ndarray
@@ -62,12 +126,41 @@ class MazeWalker(Protocol):
     def move(self) -> None:
         ...
 
+
 class Animation:
+    """Class for animating maze walkers."""
+
     def __init__(self, mw: MazeWalker, color: str = "springgreen"):
+        """
+        Parameters
+        ----------
+        mw : MazeWalker
+            A MazeWalker instance
+        color : str, optional
+            A string representing the color of the walkers,
+            by default "springgreen". See
+            https://matplotlib.org/stable/gallery/color/named_colors.html
+            for a full list of colors
+        """
         self._mw = mw
         self.color = color
 
     def plot(self, size: int, show: bool = True) -> matplotlib.figure.Figure:
+        """Figure containing the labyrinth and the walkers.
+
+        Parameters
+        ----------
+        size : int
+            Size of the dots representing the walkers
+        show : bool, optional
+            If True show the plot directly, otherwise just return
+            the figure, by default True
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+            The figure
+        """
         fig, ax = plt.subplots()
         plot(self._mw.maze)
         self._pos = ax.scatter(
@@ -83,6 +176,18 @@ class Animation:
         return fig
 
     def _update_frame(self, i: int) -> tuple[matplotlib.collections.PathCollection]:
+        """Method for updating the animation
+
+        Parameters
+        ----------
+        i : int
+            The index of the frame
+
+        Returns
+        -------
+        tuple[matplotlib.collections.PathCollection]
+            Object containing the dots
+        """
         self._mw.move()
         self._pos.set_offsets(np.array([self._mw.x, self._mw.y]).T)
         self._pos.axes.title.set_text(f"Frame {i}")
@@ -96,6 +201,26 @@ class Animation:
         filename: str = "",
         show: bool = True,
     ) -> FuncAnimation:
+        """Animate random walk in maze
+
+        Parameters
+        ----------
+        N : int
+            Number of frames
+        size : int, optional
+            Size of the dots representing the walkers, by default 10
+        interval : int, optional
+            Delay between frames in milliseconds, by default 1
+        filename : str, optional
+            Filename to save the animation, by default ""
+        show : bool, optional
+            If True show the animation, by default True
+
+        Returns
+        -------
+        FuncAnimation
+            Animation object
+        """
         fig = self.plot(size, show=False)
         animation = FuncAnimation(
             fig,
