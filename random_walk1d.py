@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt  # Importer matplotlib-biblioteket og gi det ali
 
 def random_walker_1D(N):
     x = np.zeros(N + 1)  # Initialiser en array for å lagre posisjonen ved hver steg
-    for n in range(1, N + 1):
+### Dette er en for-løkke som itererer gjennom verdier av n. range(1, N + 1) genererer tallene fra 1 til N (inkludert),
+ og for hver iterasjon i løkken blir n satt til en av disse verdiene.
+    for n in range(1, N + 1): 
         step = np.random.choice([-1, 0, 1])  # Velg tilfeldig steg fra {-1, 0, 1}
         x[n] = x[n - 1] + step
     return x
