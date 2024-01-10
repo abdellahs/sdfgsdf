@@ -6,6 +6,7 @@ def random_walker_1D(N):
 ### Dette er en for-løkke som itererer gjennom verdier av n. range(1, N + 1) genererer tallene fra 1 til N (inkludert),
  og for hver iterasjon i løkken blir n satt til en av disse verdiene.
     for n in range(1, N + 1): 
+        # # Oppdaterer posisjonen ved det nåværende steg ved å legge til det tilfeldige steget
         step = np.random.choice([-1, 0, 1])  # Velg tilfeldig steg fra {-1, 0, 1}
         x[n] = x[n - 1] + step
     return x
